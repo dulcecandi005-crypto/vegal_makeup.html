@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEGAL Makeup Collection</title>
+
+<style>
+
+body{
+  margin:0;
+  font-family:'Segoe UI', sans-serif;
+  background:#f5f5f5;
+}
+
+/* HEADER */
+.header{
+  background:pink;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,0.05);
+}
+
+.logo{
+  width:200px;
+  display:block;
+  margin:0 auto 10px auto;
+}
+
+.header h1{
+  color:#000000;
+  margin:0;
+}
+
+/* BUSCADOR */
+.buscador{
+  text-align:center;
+  padding:15px;
+}
+
+.buscador input{
+  width:60%;
+  padding:10px;
+  border-radius:25px;
+  border:1px solid #ddd;
+  outline:none;
+}
+
+/* BOTÓN CARRITO */
+.abrir-carrito{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:black;
+  color:white;
+  padding:10px 18px;
+  border-radius:30px;
+  cursor:pointer;
+  z-index:1001;
+}
+
+/* CATEGORÍAS */
+.categorias{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  padding:20px;
+}
+
+.categorias button{
+  background:white;
+  border:1px solid #ddd;
+  padding:8px 18px;
+  border-radius:20px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.categorias button.activo,
+.categorias button:hover{
+  background:black;
+  color:white;
+}
+
+/* PRODUCTOS */
+.contenedor{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  padding:30px;
+}
+
+.producto{
+  background:white;
+  border-radius:15px;
+  padding:15px;
+  text-align:center;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+.producto:hover{
+  transform:translateY(-5px);
+}
+
+.producto img{
+  width:150px;
+  height:150px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.precio{
+  color:#00a650;
+  font-weight:bold;
+}
+
+.boton{
+  background:black;
+  color:white;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  margin-top:10px;
+  width:100%;
+}
+
+/* CARRITO */
+.carrito{
+  position:fixed;
+  top:0;
+  right:-400px;
+  width:350px;
+  height:100%;
+  background:white;
+  padding:20px;
+  box-shadow:-4px 0 15px rgba(0,0,0,0.2);
+  transition:0.4s;
+  overflow:auto;
+  z-index:1000;
+}
+
+.carrito.activo{
+  right:0;
+}
+
+.total{
+  font-weight:bold;
+  margin-top:10px;
+}
+
+input, select{
+  width:100%;
+  padding:8px;
+  margin-bottom:8px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+/* TICKET */
+#ticket{
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:white;
+padding:20px;
+width:320px;
+border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+z-index:2000;
+}
+.logo-wrapper{
+  position: relative;
+  display: inline-block;
+}
+
+.destellos{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 250px;
+  pointer-events: none;
+}
+
+/* LOGIN / REGISTRO */
+
+.boton-login{
+position:fixed;
+top:20px;
+left:20px;
+background:black;
+color:white;
+padding:10px 18px;
+border-radius:30px;
+cursor:pointer;
+z-index:1001;
+}
+
+.login{
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:white;
+padding:25px;
+width:320px;
+border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+z-index:3000;
+}
+
+.login h3{
+text-align:center;
+}
+
+.login input{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+.cerrar-login{
+background:#ccc;
+color:black;
+margin-top:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="boton-login" onclick="abrirLogin()">
+👤 Iniciar sesión
+</div>
+
+<div class="header">
+  <div class="logo-wrapper">
+    <img src="Logo rojo.jpg" class="logo">
+    <img src="destellos.gif" class="destellos">
+  </div>
+  <h1>VEGAL Makeup Collection</h1>
+</div>
+
+<div class="abrir-carrito" onclick="toggleCarrito()">
+🛒 (<span id="contador">0</span>)
+</div>
+
+<div class="buscador">
+  <input type="text" id="buscadorInput" placeholder="Buscar productos..." onkeyup="buscarProducto()">
+</div>
+
+
+<div class="categorias">
+  <button class="activo" onclick="filtrar('todos',this)">Todos</button>
+  <button onclick="filtrar('makeup',this)">Makeup</button>
+  <button onclick="filtrar('skincare',this)">Skincare</button>
+  <button onclick="filtrar('ofertas',this)">Ofertas</button>
+</div>
+
+<div class="contenedor" id="contenedorProductos">
+
+<div class="producto" data-categoria="makeup">
+<img src="labial.jpg">
+<h3>Labial con glitter</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('Labial brillante',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="rubor.jpg">
+<h3>Rubor en polvo</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('Rubor',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="rimel.jpg">
+<h3>Rímel</h3>
+<p class="precio">$180</p>
+<button class="boton" onclick="agregarProducto('Rímel',180)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="agua micelar.jpg">
+<h3>Agua Micelar</h3>
+<p class="precio">$210</p>
+<button class="boton" onclick="agregarProducto('Agua Micelar',210)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="base liquida.jpg">
+<h3>Base líquida</h3>
+<p class="precio">$250</p>
+<button class="boton" onclick="agregarProducto('Base líquida',250)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="ofertas">
+<img src="kit glow.jpg">
+<h3>Kit Glow</h3>
+<p>
+Precio: <del>$350.50</del> <span style="color:red;"><strong>$219.99</strong></span>
+</p>
+<button class="boton" onclick="agregarProducto('Kit Glow',350)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="labial matte.jpg">
+<h3>Labial Matte</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('Labial Matte',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="mascarilla para ojera.jpg">
+<h3>Mascarilla para ojera</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('Mascarilla para ojera',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="mascarilla para labios.jpg">
+<h3>Mascarilla para Labios</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('mascarilla para labios',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="ofertas">
+<img src="agua de rosas.jpg">
+<h3>agua de rosas NIVEA</h3>
+<p>
+Precio: <del>$190</del> <span style="color:red;"><strong>$100.00</strong></span>
+</p>
+<button class="boton" onclick="agregarProducto('agua de rosas',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="acido hialuronico.jpg">
+<h3>acido hialuronico</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('acido hialuronico',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="agua micelar n.jpeg">
+<h3>agua micelar en aceite GARNIER</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('agua micelar GARNIER',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="Crema hidratante.jpeg">
+<h3>Crema Hidratante GARNIER</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('Crema Hidratante GARNIER',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="Makeup">
+<img src="rubor liquidoo.jpeg">
+<h3>Rubor Liquido</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('Rubor liquido',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="Makeup">
+<img src="blush.jpeg">
+<h3>Blush</h3>
+<p class="precio">$197</p>
+<button class="boton" onclick="agregarProducto('Blush',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="Makeup">
+<img src="paleta de sombras up.jpeg">
+<h3>Paleta de Sombras UP</h3>
+<p class="precio">$237</p>
+<button class="boton" onclick="agregarProducto('Paleta de sombras UP',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="Limpiador facial.jpeg">
+<h3>Limpiador facial</h3>
+<p class="precio">$117</p>
+<button class="boton" onclick="agregarProducto('Limpiador facial',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="crema contorno de ojos.jpeg">
+<h3>crema contorno de ojos</h3>
+<p class="precio">$199</p>
+<button class="boton" onclick="agregarProducto('crema contorno de ojos',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="colageno en barra.jpeg">
+<h3>colageno en barra</h3>
+<p class="precio">$299</p>
+<button class="boton" onclick="agregarProducto('colageno en barra',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="mascarilla.jpeg">
+<h3>mascarlla de Arcilla</h3>
+<p class="precio">$299</p>
+<button class="boton" onclick="agregarProducto('mascarlla de Arcilla,197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="marcarilla de carbono.jpeg">
+<h3>mascarilla de carbono</h3>
+<p class="precio">$210</p>
+<button class="boton" onclick="agregarProducto('mascarlla de carbono,197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="Limpiador Facial.jpeg">
+<h3>Limpiador Facial</h3>
+<p class="precio">$400</p>
+<button class="boton" onclick="agregarProducto('Limpiador Facial,197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="Aceite Exfoliante.jpeg">
+<h3>Aceite Exfoliante</h3>
+<p class="precio">$280</p>
+<button class="boton" onclick="Aceite Exfoliante,197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="skincare">
+<img src="Bloqueador solar.jpeg">
+<h3>Bloqueador solar</h3>
+<p class="precio">$360</p>
+<button class="boton" onclick="agregarProducto('Bloqueador solar,197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="sombras.jpg">
+<h3>Paleta de Sombras </h3>
+<p class="precio">$437</p>
+<button class="boton" onclick="agregarProducto('Paleta de sombras',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="Delineador.jpg">
+<h3>Delineador negro</h3>
+<p class="precio">$117</p>
+<button class="boton" onclick="agregarProducto('Delineador negro',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="corector.jpg">
+<h3>Corrector</h3>
+<p class="precio">$200</p>
+<button class="boton" onclick="agregarProducto('Corrector',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="polvo.jpg">
+<h3>Polvo</h3>
+<p class="precio">$299</p>
+<button class="boton" onclick="agregarProducto('Polvo',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="makeup">
+<img src="contorno.jpg">
+<h3>Contorno</h3>
+<p class="precio">$199</p>
+<button class="boton" onclick="agregarProducto('Contorno',197)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="ofertas">
+<img src="primer.jpg">
+<h3>Primer</h3>
+<p>
+Precio: <del>$399.50</del> <span style="color:red;"><strong>$200.99</strong></span>
+</p>
+<button class="boton" onclick="agregarProducto('Primer',350)">Agregar</button>
+</div>
+
+<div class="producto" data-categoria="ofertas">
+<img src="dior.jpg">
+<h3>Gloss Dior</h3>
+<p>
+Precio: <del>$1000.50</del> <span style="color:red;"><strong>$500.99</strong></span>
+</p>
+<button class="boton" onclick="agregarProducto('Gloss Dior',350)">Agregar</button>
+</div>
+</div>
+
+<div class="carrito" id="carrito">
+<h2>🛍️ Mi carrito</h2>
+<div id="listaCarrito"></div>
+<div class="total">Total: $<span id="total">0</span></div>
+<button class="boton" onclick="vaciarCarrito()">Vaciar</button>
+
+<hr>
+
+<h3>💳 Información de Transferencia</h3>
+<input type="text" id="titular" placeholder="Nombre del titular">
+<select id="bancoCliente">
+<option value="">Selecciona tu banco</option>
+<option>BBVA</option>
+<option>Banorte</option>
+<option>Santander</option>
+<option>HSBC</option>
+<option>Banco Azteca</option>
+<option>Bancooppel</option>
+<option>Mercado pago</option>
+</select>
+<input type="text" id="cuentaCliente" placeholder="CLABE o número de cuenta">
+<input type="text" id="referencia" placeholder="Referencia o número de operación">
+
+<button class="boton" onclick="confirmarPago()">Confirmar pago</button>
+</div>
+
+<div id="ticket">
+<h3 style="text-align:center;">🎟️ Ticket de Compra</h3>
+<div id="contenidoTicket" style="font-size:14px;"></div>
+<button class="boton" onclick="cerrarTicket()">Cerrar</button>
+</div>
+
+<div class="login" id="login">
+<h3>Crear cuenta</h3>
+<button class="boton" onclick="cerrarSesion()">Cerrar sesión</button>
+
+<input type="text" id="nombreUsuario" placeholder="Nombre">
+
+<input type="email" id="correoUsuario" placeholder="Correo electrónico">
+
+<input type="password" id="passwordUsuario" placeholder="Contraseña">
+
+<button class="boton" onclick="registrarUsuario()">Registrarse</button>
+
+<button class="boton cerrar-login" onclick="cerrarLogin()">Cerrar</button>
+</div>
+
+<script>
+
+let carrito=[];
+
+function toggleCarrito(){
+document.getElementById("carrito").classList.toggle("activo");
+}
+
+function agregarProducto(nombre,precio){
+carrito.push({nombre,precio});
+actualizarCarrito();
+}
+
+function actualizarCarrito(){
+let lista="";
+let total=0;
+carrito.forEach(item=>{
+total+=item.precio;
+lista+=item.nombre+" - $"+item.precio+"<br>";
+});
+document.getElementById("listaCarrito").innerHTML=lista;
+document.getElementById("total").textContent=total;
+document.getElementById("contador").textContent=carrito.length;
+}
+
+function vaciarCarrito(){
+carrito=[];
+actualizarCarrito();
+}
+
+function confirmarPago(){
+let titular=document.getElementById("titular").value;
+let banco=document.getElementById("bancoCliente").value;
+let referencia=document.getElementById("referencia").value;
+
+if(carrito.length===0){
+alert("Tu carrito está vacío.");
+return;
+}
+
+if(titular==="" || banco==="" || referencia===""){
+alert("Completa los datos de pago.");
+return;
+}
+
+let numeroPedido="VEG"+Math.floor(Math.random()*100000);
+let fecha=new Date().toLocaleString();
+let listaProductos="";
+let total=0;
+
+carrito.forEach(item=>{
+total+=item.precio;
+listaProductos+=item.nombre+" - $"+item.precio+"<br>";
+});
+
+document.getElementById("contenidoTicket").innerHTML=
+"<strong>Pedido:</strong> "+numeroPedido+"<br>"+
+"<strong>Fecha:</strong> "+fecha+"<br><br>"+
+"<strong>Cliente:</strong> "+titular+"<br>"+
+"<strong>Banco:</strong> "+banco+"<br>"+
+"<strong>Referencia:</strong> "+referencia+"<br><br>"+
+"<strong>Productos:</strong><br>"+listaProductos+"<br>"+
+"<strong>Total pagado:</strong> $"+total+"<br><br>"+
+"Gracias por comprar en VEGAL Makeup Collection 💖";
+
+document.getElementById("ticket").style.display="block";
+vaciarCarrito();
+}
+
+function cerrarTicket(){
+document.getElementById("ticket").style.display="none";
+}
+
+function filtrar(categoria,boton){
+let productos=document.querySelectorAll(".producto");
+let botones=document.querySelectorAll(".categorias button");
+botones.forEach(b=>b.classList.remove("activo"));
+boton.classList.add("activo");
+productos.forEach(p=>{
+if(categoria==="todos" || p.dataset.categoria===categoria){
+p.style.display="block";
+}else{
+p.style.display="none";
+}
+});
+}
+
+function buscarProducto(){
+let input=document.getElementById("buscadorInput").value.toLowerCase();
+let productos=document.querySelectorAll(".producto");
+productos.forEach(p=>{
+let nombre=p.querySelector("h3").textContent.toLowerCase();
+if(nombre.includes(input)){
+p.style.display="block";
+}else{
+p.style.display="none";
+}
+});
+}
+let usuarios=[];
+
+function abrirLogin(){
+document.getElementById("login").style.display="block";
+}
+
+function cerrarLogin(){
+document.getElementById("login").style.display="none";
+}
+
+function registrarUsuario(){
+
+let nombre=document.getElementById("nombreUsuario").value;
+let correo=document.getElementById("correoUsuario").value;
+let password=document.getElementById("passwordUsuario").value;
+
+if(nombre==="" || correo==="" || password===""){
+alert("Completa todos los campos");
+return;
+}
+
+usuarios.push({nombre,correo,password});
+
+alert("Cuenta creada correctamente 💖");
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("nombreUsuario").value="";
+document.getElementById("correoUsuario").value="";
+document.getElementById("passwordUsuario").value="";
+}
+/* GUARDAR USUARIO */
+
+function registrarUsuario(){
+
+let nombre=document.getElementById("nombreUsuario").value;
+let correo=document.getElementById("correoUsuario").value;
+let password=document.getElementById("passwordUsuario").value;
+
+if(nombre==="" || correo==="" || password===""){
+alert("Completa todos los campos");
+return;
+}
+
+let usuario={
+nombre:nombre,
+correo:correo,
+password:password
+};
+
+localStorage.setItem("usuarioVEGAL",JSON.stringify(usuario));
+
+alert("Cuenta creada y guardada 💖");
+
+document.getElementById("login").style.display="none";
+
+document.querySelector(".boton-login").innerHTML="👤 "+nombre;
+}
+
+/* CARGAR USUARIO GUARDADO */
+
+window.onload=function(){
+
+let usuarioGuardado=localStorage.getItem("usuarioVEGAL");
+
+if(usuarioGuardado){
+
+let usuario=JSON.parse(usuarioGuardado);
+
+document.querySelector(".boton-login").innerHTML="👤 "+usuario.nombre;
+
+}
+
+}
+function cerrarSesion(){
+
+localStorage.removeItem("usuarioVEGAL");
+
+document.querySelector(".boton-login").innerHTML="👤 Iniciar sesión";
+
+alert("Sesión cerrada correctamente");
+
+}
+
+</script>
+
+</body>
+</html>
